@@ -1,11 +1,11 @@
-import config
-import tools
+import os
 from loghelper import log
 from request import http
 import time
 
 token = ''
-
+if os.getenv('AutoMihoyoBBS_captcha_token') is not None:
+    token = os.getenv('AutoMihoyoBBS_captcha_token')
 
 def game_captcha(gt: str, challenge: str):
     response = geetest(gt, challenge, 'https://passport-api.mihoyo.com/account/ma-cn-passport/app/loginByPassword')
