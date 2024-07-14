@@ -31,26 +31,17 @@ def geetest(gt: str, challenge: str, referer: str):
     print(gt)
     print(challenge)
     
-    response = http.post('http://api.ttocr.com/api/recognize', data={
-        'appkey': token,
+    response = http.post('http://api.damagou.top/apiv1/jiyanRecognize.html', data={
+        'userkey': token,
         'gt': gt,
         'challenge': challenge,
-        'referer': referer,
-        'itemid': 37
+        'headers': {
+            'Referer': referer
+        }
     }, timeout=6000)
     data = response.json()
-    if data['status'] == 1:
-        resultid = data['resultid']
-        while True:
-            time.sleep(3)
-            resdata = http.post('http://api.ttocr.com/api/results', data={
-                'appkey': token,
-                'resultid': resultid
-            })
-            jsondata = resdata.json()
-            if jsondata['msg'] == "识别成功":
-                return jsondata['data']  # 成功返回validate
-            
+    if data['status'] == 0:
+        return data["data"]
     else:
         log.warning(data['msg'])  # 打码失败输出错误信息
         return None
