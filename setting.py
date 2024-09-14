@@ -63,7 +63,10 @@ headers = {
 # 通用设置
 bbs_api = "https://bbs-api.miyoushe.com"
 web_api = "https://api-takumi.mihoyo.com"
+passport_api = "https://passport-api.mihoyo.com"
+
 account_Info_url = web_api + "/binding/api/getUserGameRolesByCookie"
+get_token_by_stoken = f"{passport_api}/account/ma-cn-session/app/getTokenBySToken"
 
 # 米游社的API列表
 bbs_account_info = "https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket"
@@ -89,6 +92,7 @@ hk4e_api_base_url = 'https://hk4e-api.mihoyo.com'
 hk4e_token_get_info_url = f'{web_api}/common/badge/v1/login/info'
 # 获取hk4e token
 get_hk4e_token_url = f'{web_api}/common/badge/v1/login/account'
+genius_invokation_status = f'{hk4e_api_base_url}/event/geniusinvokationtcg/rd_info'
 # 获取任务列表
 genius_invokation_task_url = f'{hk4e_api_base_url}/event/geniusinvokationtcg/adventure_task_list'
 # 领取任务奖励
@@ -112,7 +116,11 @@ genshin_act_id = "e202311201442471"
 honkai_sr_act_id = "e202304121516551"
 
 # 绝区零自动签到相关设置
-zzz_act_id = ""
+zzz_web_api = 'https://act-nap-api.mihoyo.com'
+zzz_game_checkin_rewards = f"{zzz_web_api}/event/luna/zzz/home?lang={cn_game_lang}"
+zzz_game_is_signurl = f"{zzz_web_api}/event/luna/zzz/info?lang={cn_game_lang}"
+zzz_game_sign_url = f"{zzz_web_api}/event/luna/zzz/sign"
+zzz_act_id = "e202406242138391"
 
 # 云原神相关api
 cloud_genshin_api = "https://api-cloudgame.mihoyo.com"
@@ -124,3 +132,4 @@ os_genshin_act_id = "e202102251931481"
 os_honkai_sr_act_id = "e202303301540311"
 os_honkai3rd_act_id = "e202110291205111"
 os_tearsofthemis_act_id = "e202202281857121"
+os_zzz_act_id = "e202406031448091"

@@ -12,7 +12,6 @@ from account import get_account_list
 
 
 class GameCheckin:
-    http = get_new_session()
 
     def __init__(self, game_id: str, game_mid: str, game_name: str, act_id: str, player_name: str = "玩家") -> None:
         """
@@ -29,8 +28,10 @@ class GameCheckin:
         self.game_name = game_name
         self.act_id = act_id
         self.player_name = player_name
+        self.headers = {}
+        self.http = get_new_session()
 
-        self.headers = self.get_headers()
+        self.set_headers()
 
         self.rewards_api = setting.cn_game_checkin_rewards
         self.account_list = self.get_account_list()
@@ -43,22 +44,23 @@ class GameCheckin:
         if len(self.account_list) != 0:
             self.checkin_rewards = self.get_checkin_rewards()
 
-    def get_headers(self) -> dict:
+    def set_headers(self):
         headers = setting.headers.copy()
         headers['DS'] = tools.get_ds(web=True)
         headers['Referer'] = 'https://act.mihoyo.com/'
         headers['Cookie'] = config.config.get("account", {}).get("cookie", "")
         headers['x-rpc-device_id'] = config.config["device"]["id"]
         headers['User-Agent'] = tools.get_useragent(config.config["games"]["cn"]["useragent"])
-        return headers
+        self.headers = headers
 
     def get_account_list(self) -> list:
         try:
             account_list = get_account_list(self.game_id, self.headers)
         except CookieError:
             log.warning(f"获取{self.game_name}账号列表失败！")
-            config.clear_cookie_game(self.game_id)
-            raise CookieError("BBS Cookie Error")
+            config.clear_cookie()
+            config.disable_games()
+            raise CookieError("Cookie Error")
         return account_list
 
     # 获取签到信息
@@ -82,7 +84,7 @@ class GameCheckin:
         data = req.json()
         if data["retcode"] != 0:
             if not update and login.update_cookie_token():
-                self.headers = self.get_headers()
+                self.set_headers()
                 return self.is_sign(region, uid, True)
             log.warning("获取账号签到信息失败！")
             print(req.text)
@@ -208,6 +210,17 @@ class Honkaisr(GameCheckin):
         self.init()
 
 
+class ZZZ(GameCheckin):
+    def __init__(self):
+        super().__init__("nap_cn", "zzz", "绝区零", setting.zzz_act_id, "绳匠")
+        self.headers["Origin"] = "https://act.mihoyo.com"
+        self.headers['X-Rpc-Signgame'] = 'zzz'
+        self.rewards_api = setting.zzz_game_checkin_rewards
+        self.is_sign_api = setting.zzz_game_is_signurl
+        self.sign_api = setting.zzz_game_sign_url
+        self.init()
+
+
 def checkin_game(game_name, game_module, game_print_name=""):
     game_config = config.config["games"]["cn"][game_name]
     if game_config["checkin"]:
@@ -226,7 +239,8 @@ def run_task():
         ("崩坏3rd", "honkai3rd", Honkai3rd),
         ("未定事件簿", "tears_of_themis", TearsOfThemis),
         ("原神", "genshin", Genshin),
-        ("崩坏: 星穹铁道", "honkai_sr", Honkaisr)
+        ("崩坏: 星穹铁道", "honkai_sr", Honkaisr),
+        ("绝区零", "zzz", ZZZ)
     ]
     return_data = ''
     for game_print_name, game_name, game_module in games:
