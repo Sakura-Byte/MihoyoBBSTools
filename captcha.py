@@ -31,18 +31,12 @@ def geetest(gt: str, challenge: str, referer: str):
     print(gt)
     print(challenge)
     
-    response = http.post('http://api.damagou.top/apiv1/jiyanRecognize.html', data={
-        'userkey': token,
-        'gt': gt,
-        'challenge': challenge,
-        'headers': {
-            'Referer': referer
-        }
-    }, timeout=6000)
+    response = http.post(f'http://api.fuckmys.tk/geetest?token={token}&gt={gt}&challenge={challenge}', timeout=6000)
     data = response.json()
     if data['status'] == 0:
         return data["data"]
     else:
+        log.warning(data)
         log.warning(data['msg'])  # 打码失败输出错误信息
         return None
     
